@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "958895102870",
+    "project_id": "werkaniko-8ef63",
+    "storage_bucket": "werkaniko-8ef63.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:958895102870:android:74a4956ff8af55374b1bb7",
+        "android_client_info": {
+          "package_name": "com.example.motor_rescue"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATfaMkTS8CXMGzcTavkZYRd6IWFs21RPI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
