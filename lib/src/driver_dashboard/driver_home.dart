@@ -407,7 +407,7 @@ class _DriverHomeState extends State<DriverHome> {
       child: Column(
         children: [
           Container(
-            height: size.height * 0.25,
+            height: size.height * 0.20,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(30),
