@@ -346,7 +346,7 @@ class _MechanicHomeState extends State<MechanicHome> {
   Widget jobRequestWidget(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Container(
-      height: size.height * 0.425,
+      height: size.height * 0.450,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -361,7 +361,7 @@ class _MechanicHomeState extends State<MechanicHome> {
         children: [
           SizedBox(height: size.height * 0.02),
           Text(
-            'New Job Request - 5KM away...',
+            'New Job Request - 1KM away...',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
