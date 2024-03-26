@@ -112,7 +112,7 @@ class _MechanicHomeState extends State<MechanicHome> {
                           style: TextStyle(
                             fontSize: 25,
                             fontWeight: FontWeight.bold,
-                            fontFamily: 'Gabriela-Regular',
+                            fontFamily: "Bold",
                             color: Color.fromARGB(255, 3, 48, 85),
                           ),
                         ),
@@ -212,7 +212,7 @@ class _MechanicHomeState extends State<MechanicHome> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'Gabriela-Regular',
+                fontFamily: "Bold",
               ),
             ),
             SizedBox(height: size.height * 0.0015),
@@ -265,7 +265,7 @@ class _MechanicHomeState extends State<MechanicHome> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'Gabriela-Regular',
+                fontFamily: "Bold",
               ),
             ),
             SizedBox(height: size.height * 0.0015),
@@ -317,7 +317,7 @@ class _MechanicHomeState extends State<MechanicHome> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'Gabriela-Regular',
+                fontFamily: "Bold",
               ),
             ),
             SizedBox(height: size.height * 0.01),

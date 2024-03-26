@@ -66,7 +66,7 @@ class _DriverLoginState extends State<DriverLogin> {
                 style: TextStyle(
                   fontSize: 45,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Gabriela-Regular',
+                  fontFamily: 'Bold',
                 ),
               ),
               SizedBox(height: size.height * 0.05),
@@ -79,6 +79,10 @@ class _DriverLoginState extends State<DriverLogin> {
                 width: double.infinity,
                 height: 75,
                 child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateColor.resolveWith(
+                        (states) => Colors.black),
+                  ),
                   onPressed:
                       isButtonEnabled ? () => _logInDriver(context) : null,
                   child: const Text(
@@ -152,7 +156,7 @@ class _DriverLoginState extends State<DriverLogin> {
               border: InputBorder.none,
               icon: Icon(
                 Icons.email,
-                color: Color(0xff5ac18e),
+                color: Colors.blue,
                 size: 30,
               ),
               hintText: 'Email',
@@ -192,7 +196,7 @@ class _DriverLoginState extends State<DriverLogin> {
               border: InputBorder.none,
               icon: Icon(
                 Icons.lock,
-                color: Color(0xff5ac18e),
+                color: Colors.blue,
                 size: 30,
               ),
               hintText: 'Password',

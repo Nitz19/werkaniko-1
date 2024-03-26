@@ -39,24 +39,24 @@ class _LandingWidgetState extends State<LandingWidget> {
               children: <Widget>[
                 SizedBox(height: size.height * 0.025),
                 const Text(
-                  "\nMotor Rescue",
+                  "\nWerkaniko",
                   style: TextStyle(
-                    fontSize: 45,
+                    fontSize: 38,
                     fontWeight: FontWeight.bold,
-                    fontFamily: "Gabriela-Regular",
+                    fontFamily: "Bold",
                   ),
                 ),
                 const Text(
                   "Expert Hands, Expert Solutions\n\n",
                   style: TextStyle(
                     fontSize: 18,
-                    fontFamily: "Gabriela-Regular",
+                    fontFamily: "Bold",
                   ),
                 ),
                 Image(
                   image: AssetImage("assets/images/icon.png"),
                   fit: BoxFit.cover,
-                  height: size.height * 0.4,
+                  height: size.height * 0.3,
                 ),
                 SizedBox(height: size.height * 0.02),
                 Padding(
@@ -92,7 +92,7 @@ class _LandingWidgetState extends State<LandingWidget> {
                     Padding(
                       padding: EdgeInsets.all(size.width * 0.05),
                       child: Material(
-                        color: Colors.blue,
+                        color: Colors.black,
                         elevation: 20,
                         borderRadius: BorderRadius.circular(30),
                         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -125,7 +125,7 @@ class _LandingWidgetState extends State<LandingWidget> {
                     Padding(
                       padding: EdgeInsets.all(size.width * 0.05),
                       child: Material(
-                        color: Colors.blue,
+                        color: Colors.black,
                         elevation: 20,
                         borderRadius: BorderRadius.circular(30),
                         clipBehavior: Clip.antiAliasWithSaveLayer,

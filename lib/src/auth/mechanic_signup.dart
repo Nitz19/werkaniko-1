@@ -106,7 +106,7 @@ class _MechanicSignupState extends State<MechanicSignup> {
               style: TextStyle(
                 fontSize: 45,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'Gabriela-Regular',
+                fontFamily: 'Bold',
               ),
             ),
             SizedBox(height: size.height * 0.05),
@@ -135,6 +135,10 @@ class _MechanicSignupState extends State<MechanicSignup> {
                     width: double.infinity,
                     height: 75,
                     child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateColor.resolveWith(
+                            (states) => Colors.black),
+                      ),
                       onPressed:
                           isButtonEnabled ? () => _signUp(context) : null,
                       child: const Text(
@@ -206,7 +210,7 @@ Widget buildFirstName() {
             border: InputBorder.none,
             icon: Icon(
               Icons.person,
-              color: Color(0xff5ac18e),
+              color: Colors.blue,
               size: 30,
             ),
             hintText: 'First Name',
@@ -245,8 +249,8 @@ Widget buildLastName() {
           decoration: const InputDecoration(
             border: InputBorder.none,
             icon: Icon(
-              null,
-              color: Color(0xff5ac18e),
+              Icons.person,
+              color: Colors.blue,
               size: 30,
             ),
             hintText: 'Last Name',
@@ -287,7 +291,7 @@ Widget buildEmail() {
             border: InputBorder.none,
             icon: Icon(
               Icons.email,
-              color: Color(0xff5ac18e),
+              color: Colors.blue,
               size: 30,
             ),
             hintText: 'Email',
@@ -329,7 +333,7 @@ Widget buildPassword() {
             border: InputBorder.none,
             icon: Icon(
               Icons.lock,
-              color: Color(0xff5ac18e),
+              color: Colors.blue,
               size: 30,
             ),
             hintText: 'Password',
@@ -369,7 +373,7 @@ Widget buildAddress() {
             border: InputBorder.none,
             icon: Icon(
               Icons.house,
-              color: Color(0xff5ac18e),
+              color: Colors.blue,
               size: 30,
             ),
             hintText: 'Work Address',
@@ -410,7 +414,7 @@ Widget buildPhone() {
             border: InputBorder.none,
             icon: Icon(
               Icons.phone,
-              color: Color(0xff5ac18e),
+              color: Colors.blue,
               size: 30,
             ),
             hintText: 'Phone',

@@ -96,6 +96,15 @@ flutter:
     - family: Gabriela-Regular
       fonts:
         - asset: assets/fonts/Gabriela-Regular.ttf
+    - family: Regular
+      fonts:
+        - asset: assets/fonts/DMSans-Regular.ttf
+    - family: Medium
+      fonts:
+        - asset: assets/fonts/DMSans-Medium.ttf
+    - family: Bold
+      fonts:
+        - asset: assets/fonts/DMSans-Bold.ttf
     
   #
   # For details regarding fonts from package dependencies,

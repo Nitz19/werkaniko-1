@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:motor_rescue/src/landing.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final String? userEmail = auth.currentUser!.email;
@@ -35,11 +36,43 @@ class BottomNavDriverWidget extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<void> _signOut(BuildContext context) async {
-    try {
-      await _auth.signOut();
-    } catch (e) {
-      print('Error: $e');
-    }
+    () {
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: const Text(
+                  'Logout Confirmation',
+                  style: TextStyle(
+                      fontFamily: 'QBold', fontWeight: FontWeight.bold),
+                ),
+                content: const Text(
+                  'Are you sure you want to Logout?',
+                  style: TextStyle(fontFamily: 'QRegular'),
+                ),
+                actions: <Widget>[
+                  MaterialButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: const Text(
+                      'Close',
+                      style: TextStyle(
+                          fontFamily: 'QRegular', fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  MaterialButton(
+                    onPressed: () async {
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const LandingWidget()));
+                    },
+                    child: const Text(
+                      'Continue',
+                      style: TextStyle(
+                          fontFamily: 'QRegular', fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ));
+    };
   }
 
   @override
@@ -74,7 +107,7 @@ class BottomNavDriverWidget extends StatelessWidget {
                   break;
                 case 3:
                   _signOut(context);
-                  GoRouter.of(context).pop();
+
                   break;
                 default:
                   GoRouter.of(context).go('/driver');
@@ -112,6 +145,49 @@ class BottomNavDriverWidget extends StatelessWidget {
                 ),
               ),
               GButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                            title: const Text(
+                              'Logout Confirmation',
+                              style: TextStyle(
+                                  fontFamily: 'QBold',
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            content: const Text(
+                              'Are you sure you want to Logout?',
+                              style: TextStyle(fontFamily: 'QRegular'),
+                            ),
+                            actions: <Widget>[
+                              MaterialButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
+                                child: const Text(
+                                  'Close',
+                                  style: TextStyle(
+                                      fontFamily: 'QRegular',
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              MaterialButton(
+                                onPressed: () async {
+                                  await FirebaseAuth.instance.signOut();
+                                  Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LandingWidget()));
+                                },
+                                child: const Text(
+                                  'Continue',
+                                  style: TextStyle(
+                                      fontFamily: 'QRegular',
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ));
+                },
                 icon: Icons.logout,
                 text: 'Logout',
                 iconSize: 30,

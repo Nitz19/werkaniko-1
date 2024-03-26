@@ -151,7 +151,7 @@ class _DriverHomeState extends State<DriverHome> {
                           style: TextStyle(
                             fontSize: 25,
                             fontWeight: FontWeight.bold,
-                            fontFamily: "Gabriela-Regular",
+                            fontFamily: "Bold",
                             color: Color.fromARGB(255, 3, 48, 85),
                           ),
                         ),
@@ -256,7 +256,7 @@ class _DriverHomeState extends State<DriverHome> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'Gabriela-Regular',
+                fontFamily: "Bold",
               ),
             ),
             SizedBox(height: size.height * 0.0015),
@@ -309,7 +309,7 @@ class _DriverHomeState extends State<DriverHome> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'Gabriela-Regular',
+                fontFamily: "Bold",
               ),
             ),
             SizedBox(height: size.height * 0.0015),
@@ -361,7 +361,7 @@ class _DriverHomeState extends State<DriverHome> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'Gabriela-Regular',
+                fontFamily: "Bold",
               ),
             ),
             SizedBox(height: size.height * 0.01),
@@ -486,8 +486,7 @@ class _DriverHomeState extends State<DriverHome> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 20,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Gabriela-Regular',
+              fontFamily: "Regular",
             ),
           ),
           Container(
