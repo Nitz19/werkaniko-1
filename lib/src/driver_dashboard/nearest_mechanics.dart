@@ -56,6 +56,16 @@ class _NearestMechanicsState extends State<NearestMechanics> {
     super.initState();
   }
 
+  List<String> carIssues = [
+    'Out of Fuel',
+    'Engine malfunction',
+    'Tire puncture',
+    'Battery failure',
+    'Transmission issues',
+    'Brake system malfunction',
+    'Others',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,51 +136,140 @@ class _NearestMechanicsState extends State<NearestMechanics> {
                             isThreeLine: true,
                             iconColor: Colors.blueGrey,
                             onTap: () async {
-                              QuerySnapshot requestsQuery = await _jobs
-                                  .where("mechanicEmail",
-                                      isEqualTo: documentSnapshot['email'])
-                                  .where("jobRequestStatus",
-                                      whereIn: ["requested", "accepted"]).get();
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Dialog(
+                                    child: SizedBox(
+                                        height: 400,
+                                        width: 400,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: GridView.builder(
+                                            itemCount: carIssues.length,
+                                            gridDelegate:
+                                                SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisCount: 2),
+                                            itemBuilder: (context, index) {
+                                              return GestureDetector(
+                                                onTap: () async {
+                                                  QuerySnapshot requestsQuery =
+                                                      await _jobs
+                                                          .where(
+                                                              "mechanicEmail",
+                                                              isEqualTo:
+                                                                  documentSnapshot[
+                                                                      'email'])
+                                                          .where(
+                                                              "jobRequestStatus",
+                                                              whereIn: [
+                                                        "requested",
+                                                        "accepted"
+                                                      ]).get();
 
-                              if (requestsQuery.docs.isEmpty) {
-                                if (currentLocation != null &&
-                                    userEmail != null) {
-                                  print(currentLocation!.latitude);
+                                                  if (requestsQuery
+                                                      .docs.isEmpty) {
+                                                    if (currentLocation !=
+                                                            null &&
+                                                        userEmail != null) {
+                                                      print(currentLocation!
+                                                          .latitude);
 
-                                  QuerySnapshot eventsQuery = await _mechanics
-                                      .where("email",
-                                          isEqualTo: documentSnapshot['email'])
-                                      .get();
+                                                      QuerySnapshot
+                                                          eventsQuery =
+                                                          await _mechanics
+                                                              .where("email",
+                                                                  isEqualTo:
+                                                                      documentSnapshot[
+                                                                          'email'])
+                                                              .get();
 
-                                  for (var document in eventsQuery.docs) {
-                                    mecEmail = document['email'];
-                                  }
-                                  print(mecEmail);
-                                  print(userEmail);
-                                  final json = {
-                                    'driverEmail': userEmail,
-                                    'mechanicEmail': mecEmail,
-                                    'jobRequestStatus': 'requested',
-                                    'latitude': currentLocation!.latitude,
-                                    'longitude': currentLocation!.longitude,
-                                    'distance': dis,
-                                    'date': DateTime(currentDate.year,
-                                            currentDate.month, currentDate.day)
-                                        .toLocal()
-                                        .toString()
-                                        .split(' ')[0],
-                                    'time':
-                                        "${currentDate.hour} : ${currentDate.minute}",
-                                    'rating': null,
-                                    'feedback': null,
-                                    'fee': null
-                                  };
-                                  await _jobs.doc().set(json);
-                                }
-                                GoRouter.of(context).push('/driver');
-                              } else {
-                                print('already sent request');
-                              }
+                                                      for (var document
+                                                          in eventsQuery.docs) {
+                                                        mecEmail =
+                                                            document['email'];
+                                                      }
+                                                      print(mecEmail);
+                                                      print(userEmail);
+                                                      final json = {
+                                                        'type':
+                                                            carIssues[index],
+                                                        'driverEmail':
+                                                            userEmail,
+                                                        'mechanicEmail':
+                                                            mecEmail,
+                                                        'jobRequestStatus':
+                                                            'requested',
+                                                        'latitude':
+                                                            currentLocation!
+                                                                .latitude,
+                                                        'longitude':
+                                                            currentLocation!
+                                                                .longitude,
+                                                        'distance': dis,
+                                                        'date': DateTime(
+                                                                currentDate
+                                                                    .year,
+                                                                currentDate
+                                                                    .month,
+                                                                currentDate.day)
+                                                            .toLocal()
+                                                            .toString()
+                                                            .split(' ')[0],
+                                                        'time':
+                                                            "${currentDate.hour} : ${currentDate.minute}",
+                                                        'rating': null,
+                                                        'feedback': null,
+                                                        'fee': null
+                                                      };
+                                                      await _jobs
+                                                          .doc()
+                                                          .set(json);
+                                                    }
+                                                    GoRouter.of(context)
+                                                        .push('/driver');
+                                                  } else {
+                                                    print(
+                                                        'already sent request');
+                                                  }
+                                                },
+                                                child: Card(
+                                                  elevation: 5,
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Icon(
+                                                        Icons.car_repair,
+                                                        size: 75,
+                                                      ),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      Text(
+                                                        carIssues[index],
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w800),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        )),
+                                  );
+                                },
+                              );
                             },
                           ),
                         );

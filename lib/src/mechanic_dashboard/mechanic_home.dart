@@ -18,6 +18,7 @@ final String? userEmail = auth.currentUser!.email;
 String? mecEmail;
 String? driverEmail;
 String? userName;
+String? type;
 
 class _MechanicHomeState extends State<MechanicHome> {
   late TextEditingController feeController;
@@ -37,6 +38,7 @@ class _MechanicHomeState extends State<MechanicHome> {
 
     status = "";
     if (requestsQuery.docs.isNotEmpty) {
+      type = requestsQuery.docs.first['type'];
       mecEmail = requestsQuery.docs.first['mechanicEmail'];
       driverEmail = requestsQuery.docs.first['driverEmail'];
     }
@@ -346,7 +348,7 @@ class _MechanicHomeState extends State<MechanicHome> {
   Widget jobRequestWidget(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Container(
-      height: size.height * 0.450,
+      height: size.height * 0.500,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -362,6 +364,14 @@ class _MechanicHomeState extends State<MechanicHome> {
           SizedBox(height: size.height * 0.02),
           Text(
             'New Job Request - 1KM away...',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Gabriela-Regular',
+            ),
+          ),
+          Text(
+            type!,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
