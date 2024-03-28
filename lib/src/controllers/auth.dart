@@ -22,6 +22,8 @@ class AuthMethods {
         await _auth.createUserWithEmailAndPassword(
             email: email, password: password!);
 
+        await _auth.currentUser!.sendEmailVerification();
+
         DriverModel userModel = DriverModel(
           fname: fname!,
           lname: lname!,
@@ -50,7 +52,12 @@ class AuthMethods {
       if (email.isNotEmpty || password.isNotEmpty) {
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
-        result = 'success';
+
+        if (_auth.currentUser!.emailVerified) {
+          result = 'success';
+        } else {
+          result = 'email not verified';
+        }
       }
     } catch (err) {
       result = err.toString();
@@ -75,6 +82,8 @@ class AuthMethods {
       if (email!.isNotEmpty || fname!.isNotEmpty || password!.isNotEmpty) {
         await _auth.createUserWithEmailAndPassword(
             email: email, password: password!);
+
+        await _auth.currentUser!.sendEmailVerification();
 
         MechanicModel userModel = MechanicModel(
           fname: fname!,
