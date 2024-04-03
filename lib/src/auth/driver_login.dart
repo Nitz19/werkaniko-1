@@ -1,7 +1,11 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:motor_rescue/src/widgets/text_widget.dart';
+import 'package:motor_rescue/src/widgets/textfield_widget.dart';
+import 'package:motor_rescue/src/widgets/toast_widget.dart';
 
 import '../controllers/auth.dart';
 
@@ -92,6 +96,115 @@ class _DriverLoginState extends State<DriverLogin> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: TextButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: ((context) {
+                        final formKey = GlobalKey<FormState>();
+                        final TextEditingController emailController =
+                            TextEditingController();
+
+                        return AlertDialog(
+                          title: TextWidget(
+                            text: 'Forgot Password',
+                            fontSize: 14,
+                            color: Colors.black,
+                          ),
+                          content: Form(
+                            key: formKey,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextFieldWidget(
+                                  hint: 'Email',
+                                  textCapitalization: TextCapitalization.none,
+                                  inputType: TextInputType.emailAddress,
+                                  label: 'Email',
+                                  controller: emailController,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter an email address';
+                                    }
+                                    final emailRegex = RegExp(
+                                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                                    if (!emailRegex.hasMatch(value)) {
+                                      return 'Please enter a valid email address';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: (() {
+                                Navigator.pop(context);
+                              }),
+                              child: TextWidget(
+                                text: 'Cancel',
+                                fontSize: 12,
+                                color: Colors.black,
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: (() async {
+                                if (formKey.currentState!.validate()) {
+                                  try {
+                                    Navigator.pop(context);
+                                    await FirebaseAuth.instance
+                                        .sendPasswordResetEmail(
+                                            email: emailController.text);
+                                    showToast(
+                                        'Password reset link sent to ${emailController.text}');
+                                  } catch (e) {
+                                    String errorMessage = '';
+
+                                    if (e is FirebaseException) {
+                                      switch (e.code) {
+                                        case 'invalid-email':
+                                          errorMessage =
+                                              'The email address is invalid.';
+                                          break;
+                                        case 'user-not-found':
+                                          errorMessage =
+                                              'The user associated with the email address is not found.';
+                                          break;
+                                        default:
+                                          errorMessage =
+                                              'An error occurred while resetting the password.';
+                                      }
+                                    } else {
+                                      errorMessage =
+                                          'An error occurred while resetting the password.';
+                                    }
+
+                                    showToast(errorMessage);
+                                    Navigator.pop(context);
+                                  }
+                                }
+                              }),
+                              child: TextWidget(
+                                text: 'Continue',
+                                fontSize: 14,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
+                    );
+                  },
+                  child: TextWidget(
+                    text: 'Forgot Password?',
+                    fontSize: 12,
+                    color: Colors.black,
                   ),
                 ),
               ),
