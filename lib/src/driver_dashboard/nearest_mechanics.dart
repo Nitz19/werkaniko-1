@@ -227,7 +227,8 @@ class _NearestMechanicsState extends State<NearestMechanics> {
                                                           .set(json);
                                                     }
                                                     GoRouter.of(context)
-                                                        .push('/driver');
+                                                        .pushReplacement(
+                                                            '/driver');
                                                   } else {
                                                     print(
                                                         'already sent request');
