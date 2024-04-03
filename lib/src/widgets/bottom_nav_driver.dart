@@ -82,13 +82,13 @@ class BottomNavDriverWidget extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.blue,
+          color: Colors.black,
           borderRadius: BorderRadius.circular(40),
         ),
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: GNav(
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.black,
             color: Colors.white,
             activeColor: Colors.white,
             tabBackgroundColor: Colors.blue.shade700,

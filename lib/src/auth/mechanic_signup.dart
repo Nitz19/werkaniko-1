@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:location/location.dart';
+import 'package:motor_rescue/src/widgets/toast_widget.dart';
 
 import '../controllers/auth.dart';
 
@@ -19,6 +20,7 @@ late TextEditingController emailController;
 late TextEditingController passwordController;
 late TextEditingController addressController;
 late TextEditingController phoneController;
+late TextEditingController confirmpasswordController;
 
 LocationData? currentLocation;
 
@@ -44,6 +46,7 @@ class _MechanicSignupState extends State<MechanicSignup> {
     lnameController.removeListener(_validateForm);
     emailController.removeListener(_validateForm);
     passwordController.removeListener(_validateForm);
+    confirmpasswordController.removeListener(_validateForm);
     addressController.removeListener(_validateForm);
     phoneController.removeListener(_validateForm);
     fnameController.dispose();
@@ -77,10 +80,12 @@ class _MechanicSignupState extends State<MechanicSignup> {
     passwordController = TextEditingController();
     addressController = TextEditingController();
     phoneController = TextEditingController();
+    confirmpasswordController = TextEditingController();
 
     fnameController.addListener(_validateForm);
     lnameController.addListener(_validateForm);
     emailController.addListener(_validateForm);
+    confirmpasswordController.addListener(_validateForm);
     passwordController.addListener(_validateForm);
     addressController.addListener(_validateForm);
     phoneController.addListener(_validateForm);
@@ -126,6 +131,8 @@ class _MechanicSignupState extends State<MechanicSignup> {
                   SizedBox(height: size.height * 0.03),
                   buildPassword(),
                   SizedBox(height: size.height * 0.03),
+                  buildPassword1(),
+                  SizedBox(height: size.height * 0.03),
                   buildAddress(),
                   SizedBox(height: size.height * 0.03),
                   buildPhone(),
@@ -139,8 +146,12 @@ class _MechanicSignupState extends State<MechanicSignup> {
                         backgroundColor: MaterialStateColor.resolveWith(
                             (states) => Colors.black),
                       ),
-                      onPressed:
-                          isButtonEnabled ? () => _signUp(context) : null,
+                      onPressed: isButtonEnabled
+                          ? () => confirmpasswordController.text ==
+                                  passwordController.text
+                              ? _signUp(context)
+                              : showToast('Password do not match!')
+                          : null,
                       child: const Text(
                         'SIGNUP',
                         style: TextStyle(
@@ -337,6 +348,46 @@ Widget buildPassword() {
               size: 30,
             ),
             hintText: 'Password',
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+Widget buildPassword1() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        alignment: Alignment.centerLeft,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 6,
+            ),
+          ],
+        ),
+        height: 60,
+        child: TextField(
+          obscureText: true,
+          controller: confirmpasswordController,
+          style: const TextStyle(
+            color: Colors.black87,
+            fontSize: 20,
+          ),
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+            icon: Icon(
+              Icons.lock,
+              color: Colors.blue,
+              size: 30,
+            ),
+            hintText: 'Confirm Password',
           ),
         ),
       ),

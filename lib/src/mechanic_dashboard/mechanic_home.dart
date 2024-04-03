@@ -170,10 +170,6 @@ class _MechanicHomeState extends State<MechanicHome> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        chatAdminWidget(context),
-                        SizedBox(
-                          width: 25,
-                        ),
                         profileWidget(context),
                       ],
                     )
@@ -300,7 +296,7 @@ class _MechanicHomeState extends State<MechanicHome> {
       child: Container(
         height: size.height * 0.2,
         decoration: BoxDecoration(
-          color: Colors.blue,
+          color: Colors.black,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -315,10 +311,10 @@ class _MechanicHomeState extends State<MechanicHome> {
             Text(
               'Job History',
               style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                fontFamily: "Bold",
-              ),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "Bold",
+                  color: Colors.white),
             ),
             SizedBox(height: size.height * 0.01),
             Expanded(
