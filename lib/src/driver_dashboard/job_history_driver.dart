@@ -24,11 +24,16 @@ class _JobHistoryDriverState extends State<JobHistoryDriver> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.black,
         iconTheme: const IconThemeData(color: Color(0xff24688e)),
         toolbarHeight: 55,
         leadingWidth: 135,
-        title: Text('Job History'),
+        title: Text(
+          'Job History',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
       ),
       bottomNavigationBar: BottomNavMechanicWidget(),
       body: StreamBuilder<QuerySnapshot>(

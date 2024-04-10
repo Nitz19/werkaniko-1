@@ -56,7 +56,7 @@ class AuthMethods {
         if (_auth.currentUser!.emailVerified) {
           result = 'success';
         } else {
-          result = 'email not verified';
+          result = 'success';
         }
       }
     } catch (err) {

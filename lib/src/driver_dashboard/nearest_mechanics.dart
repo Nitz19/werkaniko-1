@@ -5,8 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:motor_rescue/src/widgets/bottom_nav_driver.dart';
+import 'package:motor_rescue/src/widgets/toast_widget.dart';
 
 class NearestMechanics extends StatefulWidget {
   const NearestMechanics({super.key});
@@ -49,10 +51,31 @@ class _NearestMechanicsState extends State<NearestMechanics> {
     }
   }
 
+  bool hasLoaded = false;
+
+  double lat = 0;
+  double lng = 0;
+
+  void getLocation() async {
+    Location location = Location();
+
+    location.getLocation().then((location) {
+      lat = location.latitude!;
+      lng = location.longitude!;
+      //currentLocation = location;
+      //sourceLocation = location;
+    });
+
+    setState(() {
+      hasLoaded = true;
+    });
+  }
+
   @override
   void initState() {
     determinePosition();
-    getNearestMechanics();
+    // getNearestMechanics();
+    getLocation();
     super.initState();
   }
 
@@ -77,215 +100,230 @@ class _NearestMechanicsState extends State<NearestMechanics> {
         leadingWidth: 75,
       ),
       bottomNavigationBar: BottomNavDriverWidget(),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Center(
-                  child: Text(
-                    'Available mechanics near you',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "Gabriela-Regular",
+      body: hasLoaded
+          ? Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Center(
+                      child: Text(
+                        'Available mechanics near you',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Gabriela-Regular",
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              SizedBox(height: 15),
-              StreamBuilder(
-                stream: _mechanics
-                    .orderBy('distance', descending: false)
-                    .snapshots(),
-                builder:
-                    (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-                  if (streamSnapshot.hasData) {
-                    return ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: streamSnapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        final DocumentSnapshot documentSnapshot =
-                            streamSnapshot.data!.docs[index];
-                        return Card(
-                          margin: const EdgeInsets.all(10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          color: Color.fromARGB(255, 215, 193, 226),
-                          child: ListTile(
-                            leading: Icon(Icons.person_2_rounded, size: 45),
-                            title: Text(
-                              documentSnapshot['fname'],
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            subtitle: Text(
-                              "Distance: ${documentSnapshot['distance']} KM",
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            isThreeLine: true,
-                            iconColor: Colors.blueGrey,
-                            onTap: () async {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return Dialog(
-                                    child: SizedBox(
-                                        height: 400,
-                                        width: 400,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: GridView.builder(
-                                            itemCount: carIssues.length,
-                                            gridDelegate:
-                                                SliverGridDelegateWithFixedCrossAxisCount(
-                                                    crossAxisCount: 2),
-                                            itemBuilder: (context, index) {
-                                              return GestureDetector(
-                                                onTap: () async {
-                                                  QuerySnapshot requestsQuery =
-                                                      await _jobs
-                                                          .where(
-                                                              "mechanicEmail",
-                                                              isEqualTo:
-                                                                  documentSnapshot[
-                                                                      'email'])
-                                                          .where(
-                                                              "jobRequestStatus",
-                                                              whereIn: [
-                                                        "requested",
-                                                        "accepted"
-                                                      ]).get();
+                  SizedBox(height: 15),
+                  StreamBuilder(
+                    stream: _mechanics
+                        .orderBy('distance', descending: false)
+                        .snapshots(),
+                    builder:
+                        (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+                      if (streamSnapshot.hasData) {
+                        return SizedBox(
+                          height: 400,
+                          width: double.infinity,
+                          child: GoogleMap(
+                            markers: {
+                              for (int i = 0;
+                                  i < streamSnapshot.data!.docs.length;
+                                  i++)
+                                Marker(
+                                  infoWindow: InfoWindow(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return Dialog(
+                                              child: SizedBox(
+                                                  height: 400,
+                                                  width: 400,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10.0),
+                                                    child: GridView.builder(
+                                                      itemCount:
+                                                          carIssues.length,
+                                                      gridDelegate:
+                                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                                              crossAxisCount:
+                                                                  2),
+                                                      itemBuilder:
+                                                          (context, index) {
+                                                        return GestureDetector(
+                                                          onTap: () async {
+                                                            QuerySnapshot requestsQuery = await _jobs
+                                                                .where(
+                                                                    "mechanicEmail",
+                                                                    isEqualTo: streamSnapshot
+                                                                            .data!
+                                                                            .docs[i]
+                                                                        [
+                                                                        'email'])
+                                                                .where(
+                                                                    "jobRequestStatus",
+                                                                    whereIn: [
+                                                                  "requested",
+                                                                  "accepted"
+                                                                ]).get();
 
-                                                  if (requestsQuery
-                                                      .docs.isEmpty) {
-                                                    if (currentLocation !=
-                                                            null &&
-                                                        userEmail != null) {
-                                                      print(currentLocation!
-                                                          .latitude);
+                                                            if (requestsQuery
+                                                                .docs.isEmpty) {
+                                                              if (userEmail !=
+                                                                  null) {
+                                                                try {
+                                                                  QuerySnapshot
+                                                                      eventsQuery =
+                                                                      await _mechanics
+                                                                          .where(
+                                                                              "email",
+                                                                              isEqualTo: streamSnapshot.data!.docs[i]['email'])
+                                                                          .get();
 
-                                                      QuerySnapshot
-                                                          eventsQuery =
-                                                          await _mechanics
-                                                              .where("email",
-                                                                  isEqualTo:
-                                                                      documentSnapshot[
-                                                                          'email'])
-                                                              .get();
-
-                                                      for (var document
-                                                          in eventsQuery.docs) {
-                                                        mecEmail =
-                                                            document['email'];
-                                                      }
-                                                      print(mecEmail);
-                                                      print(userEmail);
-                                                      final json = {
-                                                        'type':
-                                                            carIssues[index],
-                                                        'driverEmail':
-                                                            userEmail,
-                                                        'mechanicEmail':
-                                                            mecEmail,
-                                                        'jobRequestStatus':
-                                                            'requested',
-                                                        'latitude':
-                                                            currentLocation!
-                                                                .latitude,
-                                                        'longitude':
-                                                            currentLocation!
-                                                                .longitude,
-                                                        'distance': dis,
-                                                        'date': DateTime(
-                                                                currentDate
-                                                                    .year,
-                                                                currentDate
-                                                                    .month,
-                                                                currentDate.day)
-                                                            .toLocal()
-                                                            .toString()
-                                                            .split(' ')[0],
-                                                        'time':
-                                                            "${currentDate.hour} : ${currentDate.minute}",
-                                                        'rating': null,
-                                                        'feedback': null,
-                                                        'fee': null
-                                                      };
-                                                      await _jobs
-                                                          .doc()
-                                                          .set(json);
-                                                    }
-                                                    GoRouter.of(context)
-                                                        .pushReplacement(
-                                                            '/driver');
-                                                  } else {
-                                                    print(
-                                                        'already sent request');
-                                                  }
-                                                },
-                                                child: Card(
-                                                  elevation: 5,
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Icon(
-                                                        Icons.car_repair,
-                                                        size: 75,
-                                                      ),
-                                                      SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      Text(
-                                                        carIssues[index],
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w800),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        )),
-                                  );
-                                },
-                              );
+                                                                  for (var document
+                                                                      in eventsQuery
+                                                                          .docs) {
+                                                                    mecEmail =
+                                                                        document[
+                                                                            'email'];
+                                                                  }
+                                                                  print(
+                                                                      mecEmail);
+                                                                  print(
+                                                                      userEmail);
+                                                                  final json = {
+                                                                    'type':
+                                                                        carIssues[
+                                                                            index],
+                                                                    'driverEmail':
+                                                                        userEmail,
+                                                                    'mechanicEmail':
+                                                                        mecEmail,
+                                                                    'jobRequestStatus':
+                                                                        'requested',
+                                                                    'latitude':
+                                                                        lat,
+                                                                    'longitude':
+                                                                        lng,
+                                                                    'distance':
+                                                                        dis,
+                                                                    'date': DateTime(
+                                                                            currentDate
+                                                                                .year,
+                                                                            currentDate
+                                                                                .month,
+                                                                            currentDate
+                                                                                .day)
+                                                                        .toLocal()
+                                                                        .toString()
+                                                                        .split(
+                                                                            ' ')[0],
+                                                                    'time':
+                                                                        "${currentDate.hour} : ${currentDate.minute}",
+                                                                    'rating':
+                                                                        null,
+                                                                    'feedback':
+                                                                        null,
+                                                                    'fee': null
+                                                                  };
+                                                                  await _jobs
+                                                                      .doc()
+                                                                      .set(
+                                                                          json);
+                                                                } catch (e) {
+                                                                  print(e);
+                                                                }
+                                                              } else {
+                                                                showToast(
+                                                                    'Please turn on your phones location!');
+                                                              }
+                                                              GoRouter.of(
+                                                                      context)
+                                                                  .pushReplacement(
+                                                                      '/driver');
+                                                            } else {
+                                                              print(
+                                                                  'already sent request');
+                                                            }
+                                                          },
+                                                          child: Card(
+                                                            elevation: 5,
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Icon(
+                                                                  Icons
+                                                                      .car_repair,
+                                                                  size: 75,
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 10,
+                                                                ),
+                                                                Text(
+                                                                  carIssues[
+                                                                      index],
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w800),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  )),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      title: streamSnapshot.data!.docs[i]
+                                          ['fname'],
+                                      snippet:
+                                          'Distance: ${streamSnapshot.data!.docs[i]['distance']}km'),
+                                  markerId: MarkerId('currentLocation'),
+                                  icon: BitmapDescriptor.defaultMarker,
+                                  position: LatLng(
+                                      streamSnapshot.data!.docs[i]['lat'],
+                                      streamSnapshot.data!.docs[i]['lng']),
+                                ),
                             },
+                            mapType: MapType.normal,
+                            initialCameraPosition: CameraPosition(
+                                target: LatLng(lat, lng), zoom: 12),
                           ),
                         );
-                      },
-                    );
-                  }
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                },
+                      }
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-      ),
+            )
+          : Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 

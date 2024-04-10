@@ -108,12 +108,9 @@ class _BottomNavMechanicWidgetState extends State<BottomNavMechanicWidget> {
                   GoRouter.of(context).go('/mechanic');
                   break;
                 case 1:
-                  getChat(context);
-                  break;
-                case 2:
                   GoRouter.of(context).go('/mechanic/mechanicProfile');
                   break;
-                case 3:
+                case 2:
                   _signOut(context);
 
                   break;
@@ -125,16 +122,6 @@ class _BottomNavMechanicWidgetState extends State<BottomNavMechanicWidget> {
               GButton(
                 icon: Icons.home,
                 text: 'Home',
-                iconSize: 30,
-                textStyle: TextStyle(
-                  fontSize: 20,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              GButton(
-                icon: Icons.support_agent,
-                text: 'Contact Us',
                 iconSize: 30,
                 textStyle: TextStyle(
                   fontSize: 20,
