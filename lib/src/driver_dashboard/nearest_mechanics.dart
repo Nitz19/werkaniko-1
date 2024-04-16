@@ -64,10 +64,10 @@ class _NearestMechanicsState extends State<NearestMechanics> {
       lng = location.longitude!;
       //currentLocation = location;
       //sourceLocation = location;
-    });
-
-    setState(() {
-      hasLoaded = true;
+    }).whenComplete(() {
+      setState(() {
+        hasLoaded = true;
+      });
     });
   }
 
