@@ -121,9 +121,7 @@ class _NearestMechanicsState extends State<NearestMechanics> {
                   ),
                   SizedBox(height: 15),
                   StreamBuilder(
-                    stream: _mechanics
-                        .orderBy('distance', descending: false)
-                        .snapshots(),
+                    stream: _mechanics.snapshots(),
                     builder:
                         (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
                       if (streamSnapshot.hasData) {
@@ -137,169 +135,161 @@ class _NearestMechanicsState extends State<NearestMechanics> {
                                   i++)
                                 Marker(
                                   infoWindow: InfoWindow(
-                                      onTap: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return Dialog(
-                                              child: SizedBox(
-                                                  height: 400,
-                                                  width: 400,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            10.0),
-                                                    child: GridView.builder(
-                                                      itemCount:
-                                                          carIssues.length,
-                                                      gridDelegate:
-                                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                                              crossAxisCount:
-                                                                  2),
-                                                      itemBuilder:
-                                                          (context, index) {
-                                                        return GestureDetector(
-                                                          onTap: () async {
-                                                            QuerySnapshot requestsQuery = await _jobs
-                                                                .where(
-                                                                    "mechanicEmail",
-                                                                    isEqualTo: streamSnapshot
-                                                                            .data!
-                                                                            .docs[i]
-                                                                        [
-                                                                        'email'])
-                                                                .where(
-                                                                    "jobRequestStatus",
-                                                                    whereIn: [
-                                                                  "requested",
-                                                                  "accepted"
-                                                                ]).get();
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return Dialog(
+                                            child: SizedBox(
+                                                height: 400,
+                                                width: 400,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      10.0),
+                                                  child: GridView.builder(
+                                                    itemCount: carIssues.length,
+                                                    gridDelegate:
+                                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                                            crossAxisCount: 2),
+                                                    itemBuilder:
+                                                        (context, index) {
+                                                      return GestureDetector(
+                                                        onTap: () async {
+                                                          QuerySnapshot requestsQuery = await _jobs
+                                                              .where("mechanicEmail",
+                                                                  isEqualTo: streamSnapshot
+                                                                          .data!
+                                                                          .docs[i]
+                                                                      ['email'])
+                                                              .where(
+                                                                  "jobRequestStatus",
+                                                                  whereIn: [
+                                                                "requested",
+                                                                "accepted"
+                                                              ]).get();
 
-                                                            if (requestsQuery
-                                                                .docs.isEmpty) {
-                                                              if (userEmail !=
-                                                                  null) {
-                                                                try {
-                                                                  QuerySnapshot
-                                                                      eventsQuery =
-                                                                      await _mechanics
-                                                                          .where(
-                                                                              "email",
-                                                                              isEqualTo: streamSnapshot.data!.docs[i]['email'])
-                                                                          .get();
+                                                          if (requestsQuery
+                                                              .docs.isEmpty) {
+                                                            if (userEmail !=
+                                                                null) {
+                                                              try {
+                                                                QuerySnapshot
+                                                                    eventsQuery =
+                                                                    await _mechanics
+                                                                        .where(
+                                                                            "email",
+                                                                            isEqualTo:
+                                                                                streamSnapshot.data!.docs[i]['email'])
+                                                                        .get();
 
-                                                                  for (var document
-                                                                      in eventsQuery
-                                                                          .docs) {
-                                                                    mecEmail =
-                                                                        document[
-                                                                            'email'];
-                                                                  }
-                                                                  print(
-                                                                      mecEmail);
-                                                                  print(
-                                                                      userEmail);
-                                                                  final json = {
-                                                                    'type':
-                                                                        carIssues[
-                                                                            index],
-                                                                    'driverEmail':
-                                                                        userEmail,
-                                                                    'mechanicEmail':
-                                                                        mecEmail,
-                                                                    'jobRequestStatus':
-                                                                        'requested',
-                                                                    'latitude':
-                                                                        lat,
-                                                                    'longitude':
-                                                                        lng,
-                                                                    'distance':
-                                                                        dis,
-                                                                    'date': DateTime(
-                                                                            currentDate
-                                                                                .year,
-                                                                            currentDate
-                                                                                .month,
-                                                                            currentDate
-                                                                                .day)
-                                                                        .toLocal()
-                                                                        .toString()
-                                                                        .split(
-                                                                            ' ')[0],
-                                                                    'time':
-                                                                        "${currentDate.hour} : ${currentDate.minute}",
-                                                                    'rating':
-                                                                        null,
-                                                                    'feedback':
-                                                                        null,
-                                                                    'fee': null
-                                                                  };
-                                                                  await _jobs
-                                                                      .doc()
-                                                                      .set(
-                                                                          json);
-                                                                } catch (e) {
-                                                                  print(e);
+                                                                for (var document
+                                                                    in eventsQuery
+                                                                        .docs) {
+                                                                  mecEmail =
+                                                                      document[
+                                                                          'email'];
                                                                 }
-                                                              } else {
-                                                                showToast(
-                                                                    'Please turn on your phones location!');
+                                                                print(mecEmail);
+                                                                print(
+                                                                    userEmail);
+                                                                final json = {
+                                                                  'type':
+                                                                      carIssues[
+                                                                          index],
+                                                                  'driverEmail':
+                                                                      userEmail,
+                                                                  'mechanicEmail':
+                                                                      mecEmail,
+                                                                  'jobRequestStatus':
+                                                                      'requested',
+                                                                  'latitude':
+                                                                      lat,
+                                                                  'longitude':
+                                                                      lng,
+                                                                  'distance':
+                                                                      dis,
+                                                                  'date': DateTime(
+                                                                          currentDate
+                                                                              .year,
+                                                                          currentDate
+                                                                              .month,
+                                                                          currentDate
+                                                                              .day)
+                                                                      .toLocal()
+                                                                      .toString()
+                                                                      .split(
+                                                                          ' ')[0],
+                                                                  'time':
+                                                                      "${currentDate.hour} : ${currentDate.minute}",
+                                                                  'rating':
+                                                                      null,
+                                                                  'feedback':
+                                                                      null,
+                                                                  'fee': null
+                                                                };
+                                                                await _jobs
+                                                                    .doc()
+                                                                    .set(json);
+                                                              } catch (e) {
+                                                                print(e);
                                                               }
-                                                              GoRouter.of(
-                                                                      context)
-                                                                  .pushReplacement(
-                                                                      '/driver');
                                                             } else {
-                                                              print(
-                                                                  'already sent request');
+                                                              showToast(
+                                                                  'Please turn on your phones location!');
                                                             }
-                                                          },
-                                                          child: Card(
-                                                            elevation: 5,
-                                                            child: Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                Icon(
-                                                                  Icons
-                                                                      .car_repair,
-                                                                  size: 75,
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 10,
-                                                                ),
-                                                                Text(
-                                                                  carIssues[
-                                                                      index],
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w800),
-                                                                ),
-                                                              ],
-                                                            ),
+                                                            GoRouter.of(context)
+                                                                .pushReplacement(
+                                                                    '/driver');
+                                                          } else {
+                                                            print(
+                                                                'already sent request');
+                                                          }
+                                                        },
+                                                        child: Card(
+                                                          elevation: 5,
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Icon(
+                                                                Icons
+                                                                    .car_repair,
+                                                                size: 75,
+                                                              ),
+                                                              SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              Text(
+                                                                carIssues[
+                                                                    index],
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w800),
+                                                              ),
+                                                            ],
                                                           ),
-                                                        );
-                                                      },
-                                                    ),
-                                                  )),
-                                            );
-                                          },
-                                        );
-                                      },
-                                      title: streamSnapshot.data!.docs[i]
-                                          ['fname'],
-                                      snippet:
-                                          'Distance: ${streamSnapshot.data!.docs[i]['distance']}km'),
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                )),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    title: streamSnapshot.data!.docs[i]
+                                        ['fname'],
+                                  ),
                                   markerId: MarkerId('currentLocation'),
                                   icon: BitmapDescriptor.defaultMarker,
                                   position: LatLng(
