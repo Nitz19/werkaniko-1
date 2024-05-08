@@ -255,10 +255,10 @@ class _NearestMechanicsState extends State<NearestMechanics> {
                                                                 CrossAxisAlignment
                                                                     .center,
                                                             children: [
-                                                              Icon(
-                                                                Icons
-                                                                    .car_repair,
-                                                                size: 75,
+                                                              Image.asset(
+                                                                'assets/images/${index + 1}.png',
+                                                                height: 125,
+                                                                width: 125,
                                                               ),
                                                               SizedBox(
                                                                 height: 10,

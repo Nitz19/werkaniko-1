@@ -562,161 +562,165 @@ class _MechanicHomeState extends State<MechanicHome> {
           SizedBox(height: size.height * 0.03),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: size.width * 0.01),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                InkWell(
-                  onTap: () {
-                    GoRouter.of(context)
-                        .go('/mechanic/chatWithDriver/$driverEmail-$mecEmail');
-                  },
-                  splashColor: Colors.grey.withOpacity(0.5),
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 3.5, color: Colors.blue),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Column(
-                      children: [
-                        Icon(Icons.chat, size: 40, color: Colors.blue),
-                        ConstrainedBox(
-                          constraints: BoxConstraints(maxWidth: 90),
-                          child: Text(
-                            'Chat With Driver',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      GoRouter.of(context).go(
+                          '/mechanic/chatWithDriver/$driverEmail-$mecEmail');
+                    },
+                    splashColor: Colors.grey.withOpacity(0.5),
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 3.5, color: Colors.blue),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(Icons.chat, size: 40, color: Colors.blue),
+                          ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: 90),
+                            child: Text(
+                              'Chat With Driver',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(width: size.width * 0.025),
-                InkWell(
-                  onTap: () {
-                    GoRouter.of(context).go('/mechanic/directions');
-                  },
-                  splashColor: Colors.grey.withOpacity(0.5),
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 3.5, color: Colors.blue),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Column(
-                      children: [
-                        Icon(Icons.navigation, size: 40, color: Colors.blue),
-                        ConstrainedBox(
-                          constraints: BoxConstraints(maxWidth: 90),
-                          child: Text(
-                            'Get Directions',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold,
+                  SizedBox(width: size.width * 0.025),
+                  InkWell(
+                    onTap: () {
+                      GoRouter.of(context).go('/mechanic/directions');
+                    },
+                    splashColor: Colors.grey.withOpacity(0.5),
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 3.5, color: Colors.blue),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(Icons.navigation, size: 40, color: Colors.blue),
+                          ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: 90),
+                            child: Text(
+                              'Get Directions',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(width: size.width * 0.025),
-                InkWell(
-                  onTap: () {
-                    try {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: Text('Job Details'),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                TextField(
-                                  controller: vehicleNumController,
-                                  decoration: InputDecoration(
-                                      labelText: 'Vehicle Number'),
-                                ),
-                                TextField(
-                                  controller: descriptionController,
-                                  decoration:
-                                      InputDecoration(labelText: 'Description'),
-                                ),
-                                TextField(
-                                  controller: feeController,
-                                  decoration: InputDecoration(labelText: 'Fee'),
+                  SizedBox(width: size.width * 0.025),
+                  InkWell(
+                    onTap: () {
+                      try {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text('Job Details'),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  TextField(
+                                    controller: vehicleNumController,
+                                    decoration: InputDecoration(
+                                        labelText: 'Vehicle Number'),
+                                  ),
+                                  TextField(
+                                    controller: descriptionController,
+                                    decoration: InputDecoration(
+                                        labelText: 'Description'),
+                                  ),
+                                  TextField(
+                                    controller: feeController,
+                                    decoration:
+                                        InputDecoration(labelText: 'Fee'),
+                                  ),
+                                ],
+                              ),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    _jobs
+                                        .doc(docId)
+                                        .update({"fee": feeController.text});
+                                    _jobs.doc(docId).update({
+                                      "description": descriptionController.text,
+                                    });
+                                    _jobs.doc(docId).update({
+                                      "vehicle": vehicleNumController.text,
+                                    });
+                                    _jobs.doc(docId).update({
+                                      "jobRequestStatus": "completed",
+                                    });
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Job Completed.'),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('Submit'),
                                 ),
                               ],
-                            ),
-                            actions: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  _jobs
-                                      .doc(docId)
-                                      .update({"fee": feeController.text});
-                                  _jobs.doc(docId).update({
-                                    "description": descriptionController.text,
-                                  });
-                                  _jobs.doc(docId).update({
-                                    "vehicle": vehicleNumController.text,
-                                  });
-                                  _jobs.doc(docId).update({
-                                    "jobRequestStatus": "completed",
-                                  });
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Job Completed.'),
-                                      backgroundColor: Colors.green,
-                                    ),
-                                  );
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text('Submit'),
+                            );
+                          },
+                        );
+                        //setState(() {});
+                        //getStatus();
+                      } catch (e) {
+                        print(e.toString());
+                      }
+                    },
+                    splashColor: Colors.grey.withOpacity(0.5),
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 3.5, color: Colors.blue),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(Icons.done, size: 40, color: Colors.green),
+                          ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: 90),
+                            child: Text(
+                              'Job Completed',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
                               ),
-                            ],
-                          );
-                        },
-                      );
-                      //setState(() {});
-                      //getStatus();
-                    } catch (e) {
-                      print(e.toString());
-                    }
-                  },
-                  splashColor: Colors.grey.withOpacity(0.5),
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 3.5, color: Colors.blue),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Column(
-                      children: [
-                        Icon(Icons.done, size: 40, color: Colors.green),
-                        ConstrainedBox(
-                          constraints: BoxConstraints(maxWidth: 90),
-                          child: Text(
-                            'Job Completed',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.green,
-                              fontWeight: FontWeight.bold,
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
