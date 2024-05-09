@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print, dead_code, unrelated_type_equality_checks, prefer_is_empty, use_build_context_synchronously, unnecessary_string_interpolations
 
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +9,11 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motor_rescue/src/controllers/payment_controller.dart';
+import 'package:motor_rescue/src/utils/time_calculation.dart';
 import 'package:motor_rescue/src/widgets/bottom_nav_driver.dart';
 import 'package:motor_rescue/src/widgets/toast_widget.dart';
+
+Random random = Random();
 
 class DriverHome extends StatefulWidget {
   const DriverHome({super.key});
@@ -37,6 +42,7 @@ class _DriverHomeState extends State<DriverHome> {
   final CollectionReference _mechanics =
       FirebaseFirestore.instance.collection('Mechanics');
 
+  int nums = random.nextInt(16) + 30;
   Future getStatus() async {
     QuerySnapshot requestsQuery = await _jobs
         .where("driverEmail", isEqualTo: userEmail)
@@ -464,7 +470,7 @@ class _DriverHomeState extends State<DriverHome> {
   Widget jobRequestWidget(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Container(
-      height: size.height * 0.50,
+      height: size.height * 0.55,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -483,6 +489,14 @@ class _DriverHomeState extends State<DriverHome> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 20,
+              fontFamily: "Regular",
+            ),
+          ),
+          Text(
+            'ETA: ${nums}mins',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
               fontFamily: "Regular",
             ),
           ),

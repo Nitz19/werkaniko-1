@@ -135,7 +135,7 @@ class _DirectionsState extends State<Directions> {
 
   void setCustomMarkerIcon() async {
     BitmapDescriptor.fromAssetImage(
-            ImageConfiguration.empty, "assets/images/mechanicIcon.jpg")
+            ImageConfiguration.empty, "assets/images/new.png")
         .then(
       (icon) {
         currentLocationIcon = icon;

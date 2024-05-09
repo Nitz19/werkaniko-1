@@ -20,7 +20,7 @@ final CollectionReference _drivers =
     FirebaseFirestore.instance.collection('Drivers');
 final CollectionReference _mechanics =
     FirebaseFirestore.instance.collection('Mechanics');
-String name = "Kevin";
+String name = "N/A";
 
 class _messagesState extends State<messages> {
   String id;
