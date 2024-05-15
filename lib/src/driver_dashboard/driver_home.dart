@@ -9,6 +9,8 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motor_rescue/src/controllers/payment_controller.dart';
+import 'package:motor_rescue/src/driver_dashboard/nearest_mechanics.dart';
+import 'package:motor_rescue/src/mechanic_dashboard/new_mech_profile.dart';
 import 'package:motor_rescue/src/utils/time_calculation.dart';
 import 'package:motor_rescue/src/widgets/bottom_nav_driver.dart';
 import 'package:motor_rescue/src/widgets/toast_widget.dart';
@@ -538,6 +540,40 @@ class _DriverHomeState extends State<DriverHome> {
                           constraints: BoxConstraints(maxWidth: 90),
                           child: Text(
                             'Chat With Mechanic',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(width: size.width * 0.025),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => NewMechanicProfile(
+                              email: mecEmail!,
+                            )));
+                  },
+                  splashColor: Colors.grey.withOpacity(0.5),
+                  child: Container(
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 3.5, color: Colors.blue),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(Icons.person, size: 40, color: Colors.blue),
+                        ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: 90),
+                          child: Text(
+                            'Mechanic Profile',
                             style: TextStyle(
                               fontSize: 15,
                               color: Colors.blue,

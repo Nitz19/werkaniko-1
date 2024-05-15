@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:motor_rescue/src/driver_dashboard/new_driver_profile.dart';
 import '../widgets/bottom_nav_mechanic.dart';
 
 class MechanicHome extends StatefulWidget {
@@ -526,7 +527,7 @@ class _MechanicHomeState extends State<MechanicHome> {
   Widget currentJobWidget(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Container(
-      height: size.height * 0.425,
+      height: size.height * 0.450,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -586,6 +587,40 @@ class _MechanicHomeState extends State<MechanicHome> {
                             constraints: BoxConstraints(maxWidth: 90),
                             child: Text(
                               'Chat With Driver',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: size.width * 0.025),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => NewDriverProfile(
+                                email: driverEmail!,
+                              )));
+                    },
+                    splashColor: Colors.grey.withOpacity(0.5),
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 3.5, color: Colors.blue),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(Icons.person, size: 40, color: Colors.blue),
+                          ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: 90),
+                            child: Text(
+                              'Driver Profile',
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Colors.blue,
