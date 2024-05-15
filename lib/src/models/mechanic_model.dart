@@ -8,10 +8,16 @@ class MechanicModel {
   final String phone;
   final double lat;
   final double lng;
+  final String? idfront;
+  final String? idback;
+  final bool verified;
 
   MechanicModel(
       {required this.fname,
+      required this.verified,
       required this.lname,
+      required this.idback,
+      required this.idfront,
       required this.email,
       required this.address,
       required this.phone,
@@ -19,7 +25,10 @@ class MechanicModel {
       required this.lng});
 
   Map<String, dynamic> toJson() => {
+        "verified": verified,
+        "idback": idback,
         "fname": fname,
+        "idfront": idfront,
         "lname": lname,
         "email": email,
         "address": address,
@@ -41,6 +50,9 @@ class MechanicModel {
   // }
 
   static MechanicModel? fromJson(Map<String, dynamic> json) => MechanicModel(
+        verified: json['verified'],
+        idback: json['idback'],
+        idfront: json['idfront'],
         fname: json['fname'],
         lname: json['lname'],
         email: json['email'],

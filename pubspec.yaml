@@ -54,6 +54,9 @@ dependencies:
   mockito: ^5.0.0
   fluttertoast:
   flutter_map:
+  intl:
+  firebase_storage:
+  image_picker:
   
   
 

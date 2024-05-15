@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:motor_rescue/src/widgets/toast_widget.dart';
 
 import '../models/driver_model.dart';
 import '../models/mechanic_model.dart';
@@ -54,9 +55,19 @@ class AuthMethods {
             email: email, password: password);
 
         if (_auth.currentUser!.emailVerified) {
-          result = 'success';
+          await FirebaseFirestore.instance
+              .collection('Mechanics')
+              .where('email', isEqualTo: email)
+              .get()
+              .then((QuerySnapshot querySnapshot) async {
+            if (querySnapshot.docs.first['verified'] == true) {
+              result = 'success';
+            } else {
+              showToast('Your admin is not yet verified!');
+            }
+          });
         } else {
-          result = 'success';
+          result = 'not verified';
         }
       }
     } catch (err) {
@@ -76,6 +87,8 @@ class AuthMethods {
     required String? phone,
     required double? lat,
     required double? lng,
+    required String idfront,
+    required String idback,
   }) async {
     String result = 'Some error occurred';
     try {
@@ -86,6 +99,9 @@ class AuthMethods {
         await _auth.currentUser!.sendEmailVerification();
 
         MechanicModel userModel = MechanicModel(
+          verified: false,
+          idback: idback,
+          idfront: idfront,
           fname: fname!,
           lname: lname!,
           email: email,

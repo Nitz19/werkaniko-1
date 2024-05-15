@@ -208,26 +208,26 @@ class _MechanicLoginState extends State<MechanicLogin> {
                   ),
                 ),
               ),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   children: [
-              //     const Text(
-              //       "Don't have an account? ",
-              //       style: TextStyle(fontSize: 15),
-              //     ),
-              //     GestureDetector(
-              //       onTap: () => GoRouter.of(context).go('/mechanicSignup'),
-              //       child: const Text(
-              //         'Signup',
-              //         style: TextStyle(
-              //           fontSize: 15,
-              //           fontWeight: FontWeight.bold,
-              //           color: Colors.blue,
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text(
+                    "Don't have an account? ",
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  GestureDetector(
+                    onTap: () => GoRouter.of(context).go('/mechanicSignup'),
+                    child: const Text(
+                      'Signup',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               Image(
                 image: AssetImage('assets/images/mechanic.png'),
                 height: size.height * 0.4,

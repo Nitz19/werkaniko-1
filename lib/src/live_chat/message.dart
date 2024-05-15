@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class messages extends StatefulWidget {
   String id;
@@ -118,7 +119,7 @@ class _messagesState extends State<messages> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            width: 200,
+                            width: 125,
                             child: Text(
                               qs['message'],
                               softWrap: true,
@@ -128,7 +129,12 @@ class _messagesState extends State<messages> {
                             ),
                           ),
                           Text(
-                            d.hour.toString() + ":" + d.minute.toString(),
+                            DateFormat.yMMMd().add_jm().format(
+                                  qs['time'].toDate(),
+                                ),
+                            style: TextStyle(
+                              fontSize: 12,
+                            ),
                           )
                         ],
                       ),
