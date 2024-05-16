@@ -55,17 +55,9 @@ class AuthMethods {
             email: email, password: password);
 
         if (_auth.currentUser!.emailVerified) {
-          await FirebaseFirestore.instance
-              .collection('Mechanics')
-              .where('email', isEqualTo: email)
-              .get()
-              .then((QuerySnapshot querySnapshot) async {
-            if (querySnapshot.docs.first['verified'] == true) {
-              result = 'success';
-            } else {
-              showToast('Your admin is not yet verified!');
-            }
-          });
+          await _auth.signInWithEmailAndPassword(
+              email: email, password: password);
+          result = 'success';
         } else {
           result = 'not verified';
         }
@@ -129,9 +121,22 @@ class AuthMethods {
     String result = 'Some error occurred';
     try {
       if (email.isNotEmpty || password.isNotEmpty) {
-        await _auth.signInWithEmailAndPassword(
-            email: email, password: password);
-        result = 'success';
+        if (_auth.currentUser!.emailVerified) {
+          await FirebaseFirestore.instance
+              .collection('Mechanics')
+              .where('email', isEqualTo: email)
+              .get()
+              .then((QuerySnapshot querySnapshot) async {
+            if (querySnapshot.docs.first['verified'] == true) {
+              result = 'success';
+            } else {
+              result = 'Your account is not yet verified!';
+              showToast('Your account is not yet verified!');
+            }
+          });
+        } else {
+          result = 'not verified';
+        }
       }
     } catch (err) {
       result = err.toString();
