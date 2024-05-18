@@ -10,6 +10,9 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:motor_rescue/.env.dart';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart';
 
 class LiveLocation extends StatefulWidget {
   const LiveLocation({super.key});
@@ -123,14 +126,17 @@ class _LiveLocationState extends State<LiveLocation> {
   }
 
   void setCustomMarkerIcon() async {
-    BitmapDescriptor.fromAssetImage(
-            ImageConfiguration.empty, "assets/images/new.png")
-        .then(
-      (icon) {
-        currentLocationIcon = icon;
-      },
-    );
+    Uint8List imageData = await getBytesFromAsset('assets/images/new.png', 190);
+    currentLocationIcon = BitmapDescriptor.fromBytes(imageData);
   }
+
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+  }
+
 
   @override
   void initState() {
@@ -180,11 +186,7 @@ class _LiveLocationState extends State<LiveLocation> {
                   position: LatLng(
                       currentLocation!.latitude, currentLocation!.longitude),
                 ),
-                Marker(
-                  markerId: MarkerId('source'),
-                  position:
-                      LatLng(sourceLocation.latitude, sourceLocation.longitude),
-                ),
+
                 Marker(
                   markerId: MarkerId('destination'),
                   position:

@@ -83,10 +83,13 @@ final router = GoRouter(
               routes: [
                 GoRoute(
                   path: 'editDriverProfile',
-                  builder: (context, state) => const EditDriverProfile(),
+                  builder: (context, state) => EditDriverProfile(
+                    email: state.extra as String,
+                  ),
                 ),
               ],
             ),
+
             GoRoute(
               path: 'jobHistoryDriver',
               builder: (context, state) => const JobHistoryDriver(),

@@ -15,6 +15,8 @@ import 'package:motor_rescue/src/utils/time_calculation.dart';
 import 'package:motor_rescue/src/widgets/bottom_nav_driver.dart';
 import 'package:motor_rescue/src/widgets/toast_widget.dart';
 
+
+
 Random random = Random();
 
 class DriverHome extends StatefulWidget {
@@ -809,9 +811,7 @@ class _DriverHomeState extends State<DriverHome> {
         boxShadow: [
           BoxShadow(
             color: Colors.blueGrey.withOpacity(0.7),
-
             blurRadius: 10,
-            //offset: Offset(0, 0), // changes position of shadow
           ),
         ],
       ),
@@ -823,18 +823,16 @@ class _DriverHomeState extends State<DriverHome> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(30),
               image: const DecorationImage(
-                  image: AssetImage('assets/images/payment.jpg'),
-                  fit: BoxFit.cover),
+                image: AssetImage('assets/images/payment.jpg'),
+                fit: BoxFit.cover,
+              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.blueGrey.withOpacity(0.5),
-
                   blurRadius: 10,
-                  //offset: Offset(0, 0), // changes position of shadow
                 ),
               ],
             ),
-            //child: Image(image: AssetImage('assets/images/vBreakdown.png')),
           ),
           SizedBox(height: 10),
           Padding(
@@ -843,7 +841,7 @@ class _DriverHomeState extends State<DriverHome> {
               children: [
                 Flexible(
                   child: Text(
-                    'You have a payment due for your previouse job.',
+                    'You have a payment due for your previous job.',
                     style: TextStyle(fontSize: 18),
                   ),
                 ),
@@ -852,47 +850,143 @@ class _DriverHomeState extends State<DriverHome> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        _jobs
-                            .doc(docId)
-                            .update({"jobRequestStatus": "completed/paid"});
+                        _jobs.doc(docId).update({"jobRequestStatus": "completed/paid"});
                       },
                       style: ElevatedButton.styleFrom(
-                          textStyle: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 10,
-                          ),
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.green,
-                          side: BorderSide(width: 3, color: Colors.green),
-                          elevation: 15),
+                        textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.green,
+                        side: BorderSide(width: 3, color: Colors.green),
+                        elevation: 15,
+                      ),
                       child: Text('Pay by Cash'),
                     ),
-                    SizedBox(
-                      height: 1,
-                    ),
+                    SizedBox(height: 10),
                     ElevatedButton(
-                      onPressed: () {
-                        showToast('Invalid api key!');
-                        controller.makePayment(
-                            amount: fee.toString(),
-                            currency: 'LKR',
-                            context: context);
+                      onPressed: () async {
+                        if (mecEmail != null) {
+                          print('mecEmail: $mecEmail');
+
+                          // Retrieve mechanic's profile from Firestore using a query
+                          QuerySnapshot mechanicQuery = await FirebaseFirestore.instance
+                              .collection('Mechanics')
+                              .where('email', isEqualTo: mecEmail)
+                              .get();
+
+                          if (mechanicQuery.docs.isNotEmpty) {
+                            var mechanicProfile = mechanicQuery.docs.first;
+                            print('mechanicProfile exists: ${mechanicProfile.exists}');
+                            print('gcashQrCodeUrl: ${mechanicProfile['gcashQrCodeUrl']}');
+
+                            if (mechanicProfile.exists && mechanicProfile['gcashQrCodeUrl'] != null) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Gcash Payment'),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        // Display the QR code image using the URL from Firestore
+                                        Image.network(
+                                          mechanicProfile['gcashQrCodeUrl'],
+                                          height: 200,
+                                          width: 200,
+                                        ),
+                                        SizedBox(height: 10),
+                                        Text(
+                                          'Scan this QR code to pay via Gcash.',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text('Close'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          // Update the job status to "completed/paid"
+                                          await FirebaseFirestore.instance
+                                              .collection('Jobs')
+                                              .doc(docId)
+                                              .update({'jobRequestStatus': 'completed/paid'});
+
+                                          // Close the dialog
+                                          Navigator.of(context).pop();
+
+                                          // Proceed to rating
+                                          setState(() {
+                                            status = 'completed/paid';
+                                          });
+                                        },
+                                        child: Text('Done'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Error'),
+                                    content: Text('Gcash QR code is not available for this mechanic.'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text('OK'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          } else {
+                            print('Mechanic profile not found for email: $mecEmail');
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Error'),
+                                  content: Text('Mechanic profile not found.'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('OK'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                        } else {
+                          print('mecEmail is null');
+                        }
                       },
                       style: ElevatedButton.styleFrom(
-                          textStyle: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 10,
-                          ),
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.blue,
-                          side: BorderSide(width: 3, color: Colors.blue),
-                          elevation: 15),
-                      child: Text('Pay by Card'),
+                        textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.orange,
+                        side: BorderSide(width: 3, color: Colors.orange),
+                        elevation: 15,
+                      ),
+                      child: Text('Pay by Gcash'),
                     ),
+
+
+
+
                   ],
                 ),
               ],
@@ -902,6 +996,7 @@ class _DriverHomeState extends State<DriverHome> {
       ),
     );
   }
+
 
   //----------------------------------------------------------------
 

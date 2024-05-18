@@ -251,7 +251,7 @@ class _MechanicSignupState extends State<MechanicSignup> {
         child: Column(
           children: [
             const Text(
-              'Signup',
+              'Sign-up',
               style: TextStyle(
                 fontSize: 45,
                 fontWeight: FontWeight.bold,
@@ -341,7 +341,7 @@ class _MechanicSignupState extends State<MechanicSignup> {
                               : showToast('Password do not match!')
                           : null,
                       child: const Text(
-                        'SIGNUP',
+                        'SIGN-UP',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,

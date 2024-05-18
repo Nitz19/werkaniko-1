@@ -1,9 +1,13 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print, prefer_const_constructors
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../widgets/bottom_nav_mechanic.dart';
 
@@ -20,6 +24,7 @@ String? userFname;
 String? userLname;
 String? userAddress;
 String? userPhone;
+String? profileImageUrl;
 
 final fnameController = TextEditingController();
 final lnameController = TextEditingController();
@@ -32,11 +37,13 @@ final _formKey = GlobalKey<FormState>();
 
 class _EditMechanicProfileState extends State<EditMechanicProfile> {
   final CollectionReference _mechanics =
-      FirebaseFirestore.instance.collection('Mechanics');
+  FirebaseFirestore.instance.collection('Mechanics');
+  File? _image;
+  final picker = ImagePicker();
 
   Future<void> _editDetails(BuildContext context) async {
     QuerySnapshot mechanicQuery =
-        await _mechanics.where("email", isEqualTo: userEmail).get();
+    await _mechanics.where("email", isEqualTo: userEmail).get();
 
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -54,15 +61,24 @@ class _EditMechanicProfileState extends State<EditMechanicProfile> {
       if (mechanicQuery.docs.isNotEmpty) {
         tempId = mechanicQuery.docs.first.id;
 
+        if (_image != null) {
+          String fileName = '${userEmail}_profile.jpg';
+          Reference firebaseStorageRef =
+          FirebaseStorage.instance.ref().child('profile_images/$fileName');
+          await firebaseStorageRef.putFile(_image!);
+          profileImageUrl = await firebaseStorageRef.getDownloadURL();
+        }
+
         await _mechanics.doc(tempId).update({
           "fname":
-              fnameController.text == "" ? userFname : fnameController.text,
+          fnameController.text == "" ? userFname : fnameController.text,
           'lname':
-              lnameController.text == "" ? userLname : lnameController.text,
+          lnameController.text == "" ? userLname : lnameController.text,
           'address': addressController.text == ""
               ? userAddress
               : addressController.text,
-          'phone': phoneController.text == "" ? userPhone : phoneController.text
+          'phone': phoneController.text == "" ? userPhone : phoneController.text,
+          'profileImageUrl': profileImageUrl,
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -81,26 +97,33 @@ class _EditMechanicProfileState extends State<EditMechanicProfile> {
     }
   }
 
-  //----------------------------------------------
-
   Future getStatus() async {
-    //--------------------get user's details--------------------------
-
     QuerySnapshot mechanicQuery =
-        await _mechanics.where("email", isEqualTo: userEmail).get();
+    await _mechanics.where("email", isEqualTo: userEmail).get();
 
     if (mechanicQuery.docs.isNotEmpty) {
       userFname = await mechanicQuery.docs.first['fname'];
       userLname = await mechanicQuery.docs.first['lname'];
       userAddress = await mechanicQuery.docs.first['address'];
       userPhone = await mechanicQuery.docs.first['phone'];
+      profileImageUrl = mechanicQuery.docs.first['profileImageUrl'];
     }
     if (mounted) {
       setState(() {});
     }
   }
 
-  //----------------------------------------------
+  Future getImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -123,73 +146,86 @@ class _EditMechanicProfileState extends State<EditMechanicProfile> {
       body: userFname == null
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            const Text(
+              'Edit Profile',
+              style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Gabriela-Regular',
+              ),
+            ),
+            SizedBox(height: size.height * 0.02),
+            Divider(
+              color: Colors.grey,
+              height: 1,
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            const Text(
+              'Change the details you want to update and submit',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            GestureDetector(
+              onTap: getImage,
+              child: CircleAvatar(
+                radius: 80,
+                backgroundImage: _image != null
+                    ? FileImage(_image!)
+                    : profileImageUrl != null
+                    ? NetworkImage(profileImageUrl!)
+                    : AssetImage('assets/images/profile.jpg')
+                as ImageProvider,
+              ),
+            ),
+            SizedBox(height: 20),
+            Form(
+              key: _formKey,
               child: Column(
                 children: [
-                  const Text(
-                    'Edit Profile',
-                    style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Gabriela-Regular',
-                    ),
+                  Row(
+                    children: [
+                      Flexible(child: buildFirstName()),
+                      SizedBox(width: size.width * 0.03),
+                      Flexible(child: buildLastName()),
+                    ],
                   ),
-                  SizedBox(height: size.height * 0.02),
-                  Divider(
-                    color: Colors.grey,
-                    height: 1,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  const Text(
-                    'Change the details you want to update and submit',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Flexible(child: buildFirstName()),
-                            SizedBox(width: size.width * 0.03),
-                            Flexible(child: buildLastName()),
-                          ],
+                  SizedBox(height: size.height * 0.03),
+                  buildAddress(),
+                  SizedBox(height: size.height * 0.03),
+                  buildPhone(),
+                  SizedBox(height: size.height * 0.03),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    width: double.infinity,
+                    height: 75,
+                    child: ElevatedButton(
+                      onPressed: () => _editDetails(context),
+                      child: const Text(
+                        'Update Details',
+                        style: TextStyle(
+                          color: Colors.blueGrey,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
-                        SizedBox(height: size.height * 0.03),
-                        buildAddress(),
-                        SizedBox(height: size.height * 0.03),
-                        buildPhone(),
-                        SizedBox(height: size.height * 0.03),
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          width: double.infinity,
-                          height: 75,
-                          child: ElevatedButton(
-                            onPressed: () => _editDetails(context),
-                            child: const Text(
-                              'Update Details',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -438,3 +474,4 @@ Widget buildPhone() {
 }
 
 //----------------------------------------------------
+
