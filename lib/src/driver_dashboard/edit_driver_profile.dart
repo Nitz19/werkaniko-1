@@ -9,38 +9,32 @@ import 'dart:io';
 import '../widgets/bottom_nav_driver.dart';
 
 class EditDriverProfile extends StatefulWidget {
-  final String? email;
+  final String email;
 
-  const EditDriverProfile({Key? key, this.email}) : super(key: key);
+  const EditDriverProfile({super.key, required this.email});
 
   @override
   State<EditDriverProfile> createState() => _EditDriverProfileState();
 }
 
-
-final FirebaseAuth auth = FirebaseAuth.instance;
-final String? userEmail = auth.currentUser!.email;
-String? userFname;
-String? userLname;
-String? userAddress;
-String? userPhone;
-String? userProfileImageUrl;
-
-final fnameController = TextEditingController();
-final lnameController = TextEditingController();
-final emailController = TextEditingController();
-final passwordController = TextEditingController();
-final addressController = TextEditingController();
-final phoneController = TextEditingController();
-
-final _formKey = GlobalKey<FormState>();
-
 class _EditDriverProfileState extends State<EditDriverProfile> {
-  final CollectionReference _drivers =
-  FirebaseFirestore.instance.collection('Drivers');
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final CollectionReference _drivers = FirebaseFirestore.instance.collection('Drivers');
   final ImagePicker _picker = ImagePicker();
   XFile? _image;
   String? _imageUrl;
+  String? userEmail;
+  String? userFname;
+  String? userLname;
+  String? userAddress;
+  String? userPhone;
+  String? userProfileImageUrl;
+
+  final fnameController = TextEditingController();
+  final lnameController = TextEditingController();
+  final addressController = TextEditingController();
+  final phoneController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   Future<void> _pickImage() async {
     final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
@@ -98,13 +92,13 @@ class _EditDriverProfileState extends State<EditDriverProfile> {
 
         await _drivers.doc(tempId).update({
           "fname":
-          fnameController.text == "" ? userFname : fnameController.text,
+          fnameController.text.isEmpty ? userFname : fnameController.text,
           'lname':
-          lnameController.text == "" ? userLname : lnameController.text,
-          'address': addressController.text == ""
+          lnameController.text.isEmpty ? userLname : lnameController.text,
+          'address': addressController.text.isEmpty
               ? userAddress
               : addressController.text,
-          'phone': phoneController.text == "" ? userPhone : phoneController.text
+          'phone': phoneController.text.isEmpty ? userPhone : phoneController.text
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -120,24 +114,26 @@ class _EditDriverProfileState extends State<EditDriverProfile> {
     }
   }
 
-  Future getStatus() async {
-    //--------------------get user's details--------------------------
+  Future<void> getStatus() async {
+    userEmail = widget.email;
+    if (userEmail == null) {
+      return;
+    }
+
     QuerySnapshot driverQuery =
     await _drivers.where("email", isEqualTo: userEmail).get();
 
     if (driverQuery.docs.isNotEmpty) {
-      userFname = await driverQuery.docs.first['fname'];
-      userLname = await driverQuery.docs.first['lname'];
-      userAddress = await driverQuery.docs.first['address'];
-      userPhone = await driverQuery.docs.first['phone'];
-      userProfileImageUrl = await driverQuery.docs.first['profile_image_url'];
+      userFname = driverQuery.docs.first['fname'] ?? 'First Name';
+      userLname = driverQuery.docs.first['lname'] ?? 'Last Name';
+      userAddress = driverQuery.docs.first['address'] ?? 'Address';
+      userPhone = driverQuery.docs.first['phone'] ?? 'Phone';
+      userProfileImageUrl = driverQuery.docs.first['profile_image_url'];
     }
     if (mounted) {
       setState(() {});
     }
   }
-
-  //----------------------------------------------
 
   @override
   void initState() {
@@ -214,7 +210,7 @@ class _EditDriverProfileState extends State<EditDriverProfile> {
                       child: const Text(
                         'Update Details',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.blueGrey,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -236,7 +232,7 @@ class _EditDriverProfileState extends State<EditDriverProfile> {
       textCapitalization: TextCapitalization.words,
       decoration: InputDecoration(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        labelText: '$userFname',
+        labelText: userFname ?? 'First Name',
       ),
     );
   }
@@ -247,7 +243,7 @@ class _EditDriverProfileState extends State<EditDriverProfile> {
       textCapitalization: TextCapitalization.words,
       decoration: InputDecoration(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        labelText: '$userLname',
+        labelText: userLname ?? 'Last Name',
       ),
     );
   }
@@ -258,7 +254,7 @@ class _EditDriverProfileState extends State<EditDriverProfile> {
       textCapitalization: TextCapitalization.words,
       decoration: InputDecoration(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        labelText: '$userAddress',
+        labelText: userAddress ?? 'Address',
       ),
     );
   }
@@ -269,7 +265,7 @@ class _EditDriverProfileState extends State<EditDriverProfile> {
       keyboardType: TextInputType.phone,
       decoration: InputDecoration(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        labelText: '$userPhone',
+        labelText: userPhone ?? 'Phone',
       ),
     );
   }

@@ -23,13 +23,11 @@ String? userPhone;
 String? userProfileImageUrl;
 
 class _DriverProfileState extends State<DriverProfile> {
-  final CollectionReference _drivers =
-  FirebaseFirestore.instance.collection('Drivers');
+  final CollectionReference _drivers = FirebaseFirestore.instance.collection('Drivers');
 
-  Future getStatus() async {
+  Future<void> getStatus() async {
     //--------------------get user's details--------------------------
-    QuerySnapshot driverQuery =
-    await _drivers.where("email", isEqualTo: userEmail).get();
+    QuerySnapshot driverQuery = await _drivers.where("email", isEqualTo: userEmail).get();
 
     if (driverQuery.docs.isNotEmpty) {
       userFname = await driverQuery.docs.first['fname'];
@@ -42,8 +40,6 @@ class _DriverProfileState extends State<DriverProfile> {
       setState(() {});
     }
   }
-
-  //----------------------------------------------
 
   @override
   void initState() {
@@ -75,8 +71,7 @@ class _DriverProfileState extends State<DriverProfile> {
                 radius: 140,
                 backgroundImage: userProfileImageUrl != null
                     ? NetworkImage(userProfileImageUrl!)
-                    : AssetImage('assets/images/profile.jpg')
-                as ImageProvider,
+                    : AssetImage('assets/images/profile.jpg') as ImageProvider,
               ),
               SizedBox(
                 height: 20,
@@ -138,13 +133,13 @@ class _DriverProfileState extends State<DriverProfile> {
                 height: 20,
               ),
               ElevatedButton(
-                onPressed: () async {
+                onPressed: () {
                   final router = GoRouter.of(context);
                   final userEmail = FirebaseAuth.instance.currentUser?.email;
                   print('User email: $userEmail'); // Add this line for debugging
                   if (userEmail != null) {
                     print('Navigating to edit profile screen...');
-                    router.go('/driver/driverProfile/editDriverProfile?email=$userEmail');
+                    router.push('/driver/driverProfile/editDriverProfile', extra: userEmail);
                   } else {
                     // Handle the case where userEmail is null
                     print('User email is null. Showing error dialog...');

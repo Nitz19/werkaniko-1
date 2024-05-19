@@ -24,8 +24,7 @@ import 'package:motor_rescue/src/mechanic_dashboard/mechanic_profile.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  Stripe.publishableKey =
-      "pk_test_51Mr31YGofsKhWmKackjWPBQjWw9k2xEdtmmbu7aqrT35zgeUflXAduPtVIfhHgrQjZccYxfu2n3Czad6qczuE6oo00sjYZikuB";
+  Stripe.publishableKey = "pk_test_51Mr31YGofsKhWmKackjWPBQjWw9k2xEdtmmbu7aqrT35zgeUflXAduPtVIfhHgrQjZccYxfu2n3Czad6qczuE6oo00sjYZikuB";
   runApp(const MyApp());
 }
 
@@ -83,13 +82,21 @@ final router = GoRouter(
               routes: [
                 GoRoute(
                   path: 'editDriverProfile',
-                  builder: (context, state) => EditDriverProfile(
-                    email: state.extra as String,
-                  ),
+                  builder: (context, state) {
+                    final email = state.extra as String?;
+                    print('Navigating to edit profile screen with email: $email');
+                    if (email == null) {
+                      return Scaffold(
+                        body: Center(
+                          child: Text('No email provided.'),
+                        ),
+                      );
+                    }
+                    return EditDriverProfile(email: email);
+                  },
                 ),
               ],
             ),
-
             GoRoute(
               path: 'jobHistoryDriver',
               builder: (context, state) => const JobHistoryDriver(),
@@ -133,7 +140,7 @@ final router = GoRouter(
               builder: (context, state) => const JobHistoryMechanic(),
             ),
           ],
-        )
+        ),
       ],
     ),
   ],
@@ -141,6 +148,7 @@ final router = GoRouter(
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
