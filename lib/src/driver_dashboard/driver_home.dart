@@ -1,5 +1,5 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print, dead_code, unrelated_type_equality_checks, prefer_is_empty, use_build_context_synchronously, unnecessary_string_interpolations
-
+import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -999,6 +999,52 @@ class _DriverHomeState extends State<DriverHome> {
 
 
   //----------------------------------------------------------------
+  void showAdPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        bool _isButtonEnabled = false;
+
+        // Enable the button after 5 seconds
+        Timer(Duration(seconds: 5), () {
+          _isButtonEnabled = true;
+          Navigator.of(context).pop(); // Dismiss the dialog to refresh the state
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return StatefulBuilder(
+                builder: (context, setState) {
+                  return AlertDialog(
+                    contentPadding: EdgeInsets.zero,
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset('assets/images/ADS.jpg', fit: BoxFit.cover),
+                        if (_isButtonEnabled)
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('Close'),
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+          );
+        });
+
+        return AlertDialog(
+          contentPadding: EdgeInsets.zero,
+          content: Image.asset('assets/images/ADS.jpg', fit: BoxFit.cover),
+        );
+      },
+    );
+  }
 
   Widget ratingWidget(Size size, BuildContext context) {
     return Container(
@@ -1009,9 +1055,7 @@ class _DriverHomeState extends State<DriverHome> {
         boxShadow: [
           BoxShadow(
             color: Colors.blueGrey.withOpacity(0.7),
-
             blurRadius: 10,
-            //offset: Offset(0, 0), // changes position of shadow
           ),
         ],
       ),
@@ -1028,13 +1072,10 @@ class _DriverHomeState extends State<DriverHome> {
               boxShadow: [
                 BoxShadow(
                   color: Colors.blueGrey.withOpacity(0.5),
-
                   blurRadius: 10,
-                  //offset: Offset(0, 0), // changes position of shadow
                 ),
               ],
             ),
-            //child: Image(image: AssetImage('assets/images/vBreakdown.png')),
           ),
           SizedBox(height: 15),
           Padding(
@@ -1062,7 +1103,6 @@ class _DriverHomeState extends State<DriverHome> {
                       )),
                   updateOnDrag: true,
                   onRatingUpdate: (rating) {
-                    //print(rating);
                     ratingVal = rating.toInt();
                   },
                 ),
@@ -1090,6 +1130,7 @@ class _DriverHomeState extends State<DriverHome> {
                         _jobs.doc(docId).update({
                           "jobRequestStatus": "completed/paid/skippedRating",
                         });
+                        showAdPopup(context);
                       },
                       style: ElevatedButton.styleFrom(
                           textStyle: TextStyle(
@@ -1107,7 +1148,6 @@ class _DriverHomeState extends State<DriverHome> {
                     SizedBox(width: 10),
                     ElevatedButton(
                       onPressed: () async {
-                        //print(ratingController.text);
                         try {
                           await _jobs.doc(docId).update({
                             "jobRequestStatus": "completed/paid/rated",
@@ -1121,6 +1161,7 @@ class _DriverHomeState extends State<DriverHome> {
                               backgroundColor: Colors.green,
                             ),
                           );
+                          showAdPopup(context);
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
