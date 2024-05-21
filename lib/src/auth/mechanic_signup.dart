@@ -1,6 +1,8 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print, prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:go_router/go_router.dart';
 import 'package:location/location.dart';
 import 'package:motor_rescue/src/widgets/text_widget.dart';
@@ -12,6 +14,9 @@ import 'package:path/path.dart' as path;
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:io';
+import 'package:google_maps_webservice/places.dart' as location;
+import '../controllers/auth.dart';
+import 'package:google_api_headers/google_api_headers.dart';
 
 class MechanicSignup extends StatefulWidget {
   const MechanicSignup({super.key});
@@ -321,7 +326,7 @@ class _MechanicSignupState extends State<MechanicSignup> {
                   SizedBox(height: size.height * 0.03),
                   buildPassword1(),
                   SizedBox(height: size.height * 0.03),
-                  buildAddress(),
+                  buildAddress(context),
                   SizedBox(height: size.height * 0.03),
                   buildPhone(),
                   SizedBox(height: size.height * 0.03),
@@ -585,37 +590,74 @@ Widget buildPassword1() {
 
 //-------------------------------------------------------
 
-Widget buildAddress() {
+Widget buildAddress(context) {
   return Column(
     children: [
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        alignment: Alignment.centerLeft,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 6,
-            ),
-          ],
-        ),
-        height: 60,
-        child: TextField(
-          controller: addressController,
-          style: const TextStyle(
-            color: Colors.black87,
-            fontSize: 20,
+      GestureDetector(
+        onTap: () async {
+          location.Prediction? p = await PlacesAutocomplete.show(
+              mode: Mode.overlay,
+              context: context,
+              apiKey: 'AIzaSyDdXaMN5htLGHo8BkCfefPpuTauwHGXItU',
+              language: 'en',
+              strictbounds: false,
+              types: [""],
+              decoration: InputDecoration(
+                  hintText: 'Search Address',
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: const BorderSide(color: Colors.white))),
+              components: [
+                location.Component(location.Component.country, "ph")
+              ]);
+
+          location.GoogleMapsPlaces places = location.GoogleMapsPlaces(
+              apiKey: 'AIzaSyDdXaMN5htLGHo8BkCfefPpuTauwHGXItU',
+              apiHeaders: await const GoogleApiHeaders().getHeaders());
+
+          location.PlacesDetailsResponse detail =
+              await places.getDetailsByPlaceId(p!.placeId!);
+
+          addressController.text = detail.result.name;
+
+          // addMyMarker1(detail.result.geometry!.location.lat,
+          //     detail.result.geometry!.location.lng);
+
+          // mapController!.animateCamera(CameraUpdate.newLatLngZoom(
+          //     LatLng(detail.result.geometry!.location.lat,
+          //         detail.result.geometry!.location.lng),
+          //     18.0));
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 6,
+              ),
+            ],
           ),
-          decoration: const InputDecoration(
-            border: InputBorder.none,
-            icon: Icon(
-              Icons.house,
-              color: Colors.blue,
-              size: 30,
+          height: 60,
+          child: TextField(
+            enabled: false,
+            controller: addressController,
+            style: const TextStyle(
+              color: Colors.black87,
+              fontSize: 20,
             ),
-            hintText: 'Work Address',
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              icon: Icon(
+                Icons.house,
+                color: Colors.blue,
+                size: 30,
+              ),
+              hintText: 'Work Address',
+            ),
           ),
         ),
       ),
